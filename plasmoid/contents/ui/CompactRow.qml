@@ -13,15 +13,9 @@ RowLayout {
     signal toggle()
     spacing: Kirigami.Units.largeSpacing
 
-    TrayRow {
-        id: tray
-        Layout.alignment: Qt.AlignVCenter
-    }
-
     MouseArea {
         id: glyphs
         Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: tray.shown > 0 ? Kirigami.Units.largeSpacing * 1.5 : 0
         Layout.preferredWidth: glyphRow.implicitWidth
         Layout.preferredHeight: Math.max(glyphRow.implicitHeight, Kirigami.Units.iconSizes.small)
         hoverEnabled: true

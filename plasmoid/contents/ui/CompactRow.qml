@@ -18,17 +18,10 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
     }
 
-    Rectangle {
-        visible: tray.shown > 0
-        Layout.preferredWidth: 1
-        Layout.preferredHeight: Kirigami.Units.gridUnit * 0.8
-        Layout.alignment: Qt.AlignVCenter
-        color: Kirigami.Theme.disabledTextColor
-    }
-
     MouseArea {
         id: glyphs
         Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: tray.shown > 0 ? Kirigami.Units.largeSpacing : 0
         Layout.preferredWidth: glyphRow.implicitWidth
         Layout.preferredHeight: Math.max(glyphRow.implicitHeight, Kirigami.Units.iconSizes.small)
         hoverEnabled: true

@@ -44,14 +44,6 @@ RowLayout {
                 Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }
             Kirigami.Icon {
-                visible: compact.vpn.anyActive
-                source: "network-vpn-symbolic"
-                isMask: true
-                color: Kirigami.Theme.textColor
-                Layout.preferredWidth: Kirigami.Units.iconSizes.small
-                Layout.preferredHeight: Kirigami.Units.iconSizes.small
-            }
-            Kirigami.Icon {
                 visible: BluezQt.Manager.bluetoothOperational
                 source: BluezQt.Manager.connectedDevices.length > 0 ? "network-bluetooth-activated-symbolic" : "network-bluetooth-symbolic"
                 isMask: true

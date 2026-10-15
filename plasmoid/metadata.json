@@ -1,0 +1,14 @@
+{
+    "KPlugin": {
+        "Authors": [{ "Name": "Fabian" }],
+        "Category": "System Information",
+        "Description": "App tray icons, system glyphs and clock with a notch for network, bluetooth, sound, brightness, power and session",
+        "Icon": "preferences-system",
+        "Id": "io.github.aethryl.statusbar",
+        "License": "MIT",
+        "Name": "Status Bar",
+        "Version": "0.1"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

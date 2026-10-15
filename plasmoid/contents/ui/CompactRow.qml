@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import org.kde.bluezqt as BluezQt
-import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 
 RowLayout {
@@ -26,7 +25,6 @@ RowLayout {
         Layout.preferredWidth: glyphRow.implicitWidth
         Layout.preferredHeight: Math.max(glyphRow.implicitHeight, Kirigami.Units.iconSizes.small)
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
         onClicked: compact.toggle()
 
         RowLayout {
@@ -76,17 +74,6 @@ RowLayout {
                 Layout.rightMargin: Kirigami.Units.smallSpacing
                 Layout.alignment: Qt.AlignVCenter
             }
-        }
-
-        PlasmaComponents.ToolTip {
-            visible: glyphs.containsMouse && !compact.open
-            delay: Kirigami.Units.toolTipDelay
-            text: [
-                compact.net.online ? (compact.net.wired ? "Wired" : compact.net.name + " · " + compact.net.strength + "%") : "Offline",
-                compact.audio.muted ? "Muted" : "Volume " + compact.audio.percent + "%",
-                compact.power.hasBattery ? "Battery " + compact.power.percent + "% · " + compact.power.status : "",
-                compact.updates.summary
-            ].filter(s => s).join("\n")
         }
     }
 }

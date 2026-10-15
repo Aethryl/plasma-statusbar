@@ -27,11 +27,13 @@ PlasmoidItem {
     }
     AudioState { id: audioState }
     PowerState { id: powerState }
+    UpdateState { id: updateState }
 
     compactRepresentation: CompactRow {
         net: netState
         audio: audioState
         power: powerState
+        updates: updateState
         open: root.drooped
         Layout.minimumWidth: implicitWidth
         Layout.preferredWidth: implicitWidth
@@ -58,6 +60,7 @@ PlasmoidItem {
                 net: netState
                 audio: audioState
                 power: powerState
+                updates: updateState
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 1.6
             }
@@ -66,6 +69,7 @@ PlasmoidItem {
                 net: netState
                 audio: audioState
                 power: powerState
+                updates: updateState
                 active: true
                 Layout.fillWidth: true
             }
@@ -78,6 +82,7 @@ PlasmoidItem {
             return
         }
         if (drooped) {
+            updateState.check()
             let bar = compactItem
             while (bar.parent && bar.parent.parent && bar.parent.parent.parent)
                 bar = bar.parent
@@ -187,6 +192,7 @@ PlasmoidItem {
                     net: netState
                     audio: audioState
                     power: powerState
+                    updates: updateState
                     active: root.drooped
                     onClose: root.drooped = false
                 }

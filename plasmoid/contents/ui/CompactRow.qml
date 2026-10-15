@@ -9,6 +9,7 @@ RowLayout {
     required property var net
     required property var audio
     required property var power
+    required property var updates
     property bool open: false
     signal toggle()
     spacing: Kirigami.Units.largeSpacing
@@ -21,7 +22,7 @@ RowLayout {
     MouseArea {
         id: glyphs
         Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: tray.shown > 0 ? Kirigami.Units.largeSpacing : 0
+        Layout.leftMargin: tray.shown > 0 ? Kirigami.Units.largeSpacing * 1.5 : 0
         Layout.preferredWidth: glyphRow.implicitWidth
         Layout.preferredHeight: Math.max(glyphRow.implicitHeight, Kirigami.Units.iconSizes.small)
         hoverEnabled: true
@@ -31,21 +32,21 @@ RowLayout {
         RowLayout {
             id: glyphRow
             anchors.centerIn: parent
-            spacing: Kirigami.Units.smallSpacing * 2.5
+            spacing: Kirigami.Units.largeSpacing * 1.5
             opacity: glyphs.containsMouse || compact.open ? 1 : 0.9
 
-            WifiGlyph {
-                visible: !compact.net.wired && compact.net.wirelessAvailable
-                level: compact.net.bars
-                connected: compact.net.online
-                tone: compact.net.connecting ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
-                Layout.alignment: Qt.AlignVCenter
+            Kirigami.Icon {
+                visible: compact.updates.total > 0
+                source: Qt.resolvedUrl("../images/update.svg")
+                isMask: true
+                color: compact.updates.security > 0 ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
+                Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }
             Kirigami.Icon {
-                visible: compact.net.wired || !compact.net.wirelessAvailable
-                source: compact.net.wired ? "network-wired-symbolic" : "network-offline-symbolic"
+                source: compact.net.icon
                 isMask: true
-                color: Kirigami.Theme.textColor
+                color: compact.net.connecting ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
                 Layout.preferredWidth: Kirigami.Units.iconSizes.small
                 Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }
@@ -72,6 +73,7 @@ RowLayout {
             }
             Clock {
                 Layout.leftMargin: Kirigami.Units.smallSpacing
+                Layout.rightMargin: Kirigami.Units.smallSpacing
                 Layout.alignment: Qt.AlignVCenter
             }
         }
@@ -82,7 +84,8 @@ RowLayout {
             text: [
                 compact.net.online ? (compact.net.wired ? "Wired" : compact.net.name + " · " + compact.net.strength + "%") : "Offline",
                 compact.audio.muted ? "Muted" : "Volume " + compact.audio.percent + "%",
-                compact.power.hasBattery ? "Battery " + compact.power.percent + "% · " + compact.power.status : ""
+                compact.power.hasBattery ? "Battery " + compact.power.percent + "% · " + compact.power.status : "",
+                compact.updates.summary
             ].filter(s => s).join("\n")
         }
     }

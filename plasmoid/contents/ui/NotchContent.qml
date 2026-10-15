@@ -7,12 +7,19 @@ ColumnLayout {
     required property var net
     required property var audio
     required property var power
+    required property var updates
     property bool active: false
     signal close()
     spacing: Kirigami.Units.largeSpacing
 
     onActiveChanged: if (!active) session.disarm()
 
+    UpdatesSection {
+        updates: content.updates
+        Layout.fillWidth: true
+        onDone: content.close()
+    }
+    Hairline {}
     NetworkSection {
         net: content.net
         Layout.fillWidth: true

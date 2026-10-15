@@ -52,11 +52,13 @@ ColumnLayout {
         text: section.net.name
         current: true
         detail: section.net.wired ? "" : "connected"
-        WifiGlyph {
+        Kirigami.Icon {
             visible: !section.net.wired
-            level: section.net.bars
-            tone: Kirigami.Theme.highlightColor
-            Layout.alignment: Qt.AlignVCenter
+            source: section.net.icon
+            isMask: true
+            color: Kirigami.Theme.highlightColor
+            Layout.preferredWidth: Kirigami.Units.iconSizes.small
+            Layout.preferredHeight: Kirigami.Units.iconSizes.small
         }
         onClicked: KCMUtils.KCMLauncher.openSystemSettings("kcm_networkmanagement")
     }
@@ -116,9 +118,12 @@ ColumnLayout {
                         Layout.preferredWidth: Kirigami.Units.iconSizes.small * 0.75
                         Layout.preferredHeight: Kirigami.Units.iconSizes.small * 0.75
                     }
-                    WifiGlyph {
-                        level: networkRow.model.Signal >= 80 ? 4 : networkRow.model.Signal >= 55 ? 3 : networkRow.model.Signal >= 30 ? 2 : 1
-                        Layout.alignment: Qt.AlignVCenter
+                    Kirigami.Icon {
+                        source: networkRow.model.ConnectionIcon
+                        isMask: true
+                        color: Kirigami.Theme.textColor
+                        Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                        Layout.preferredHeight: Kirigami.Units.iconSizes.small
                     }
                 }
 

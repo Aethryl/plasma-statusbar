@@ -32,7 +32,7 @@ Item {
     }
     property var menuItems: []
 
-    visible: status !== "" && status !== "Passive"
+    visible: status !== "" && status !== "Passive" && !updates
     implicitWidth: iconSize
     implicitHeight: iconSize
     Layout.preferredWidth: iconSize
@@ -177,16 +177,7 @@ Item {
 
     Kirigami.Icon {
         anchors.fill: parent
-        anchors.margins: Math.round(parent.width * 0.12)
-        visible: trayIcon.updates
-        source: Qt.resolvedUrl("../images/update.svg")
-        isMask: true
-        color: trayIcon.iconName === "update-high" || trayIcon.attention ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
-    }
-
-    Kirigami.Icon {
-        anchors.fill: parent
-        visible: !pixmap.visible && !trayIcon.updates
+        visible: !pixmap.visible
         source: trayIcon.iconName.startsWith("/") ? "file://" + trayIcon.iconName
             : trayIcon.themePath !== "" ? "file://" + trayIcon.themePath + "/" + trayIcon.iconName + ".png"
             : trayIcon.iconName
@@ -199,14 +190,14 @@ Item {
     PixmapIcon {
         id: pixmap
         anchors.fill: parent
-        visible: !trayIcon.updates && trayIcon.iconName === "" && trayIcon.hasPixmap(trayIcon.pixmaps)
+        visible: trayIcon.iconName === "" && trayIcon.hasPixmap(trayIcon.pixmaps)
         pixmaps: visible ? trayIcon.pixmaps : []
         desaturate: !trayIcon.attention
         opacity: mouse.containsMouse ? 1 : 0.85
     }
 
     Rectangle {
-        visible: trayIcon.attention && !trayIcon.updates
+        visible: trayIcon.attention
         width: Math.max(2, Math.round(Kirigami.Units.smallSpacing))
         height: width
         radius: width / 2

@@ -8,7 +8,7 @@ RowLayout {
     property real iconSize: Kirigami.Units.iconSizes.small
     property var addresses: []
     readonly property int shown: visibleChildren.filter(c => c.address !== undefined).length
-    spacing: Kirigami.Units.smallSpacing * 2
+    spacing: Kirigami.Units.largeSpacing * 1.5
 
     function sync() {
         const list = watcher.properties.RegisteredStatusNotifierItems || []

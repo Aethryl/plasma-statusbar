@@ -28,7 +28,6 @@ Item {
     readonly property bool wired: online && primary.type === PlasmaNM.Enums.Wired
     readonly property string name: online ? primary.name : ""
     readonly property int strength: online && !wired ? primary.strength : 0
-    readonly property int bars: strength >= 80 ? 4 : strength >= 55 ? 3 : strength >= 30 ? 2 : strength > 0 ? 1 : 0
 
     function setWireless(on) {
         handler.enableWireless(on)

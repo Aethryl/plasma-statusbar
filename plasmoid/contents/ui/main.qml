@@ -28,12 +28,17 @@ PlasmoidItem {
     AudioState { id: audioState }
     PowerState { id: powerState }
     UpdateState { id: updateState }
+    VpnState {
+        id: vpnState
+        open: root.drooped || !root.inPanel
+    }
 
     compactRepresentation: CompactRow {
         net: netState
         audio: audioState
         power: powerState
         updates: updateState
+        vpn: vpnState
         open: root.drooped
         Layout.minimumWidth: implicitWidth
         Layout.preferredWidth: implicitWidth
@@ -61,6 +66,7 @@ PlasmoidItem {
                 audio: audioState
                 power: powerState
                 updates: updateState
+                vpn: vpnState
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 1.6
             }
@@ -70,6 +76,7 @@ PlasmoidItem {
                 audio: audioState
                 power: powerState
                 updates: updateState
+                vpn: vpnState
                 active: true
                 Layout.fillWidth: true
             }
@@ -193,6 +200,7 @@ PlasmoidItem {
                     audio: audioState
                     power: powerState
                     updates: updateState
+                    vpn: vpnState
                     active: root.drooped
                     onClose: root.drooped = false
                 }

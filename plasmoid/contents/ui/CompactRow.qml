@@ -9,6 +9,7 @@ RowLayout {
     required property var audio
     required property var power
     required property var updates
+    required property var vpn
     property bool open: false
     signal toggle()
     spacing: Kirigami.Units.largeSpacing
@@ -39,6 +40,14 @@ RowLayout {
                 source: compact.net.icon
                 isMask: true
                 color: compact.net.connecting ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
+                Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                Layout.preferredHeight: Kirigami.Units.iconSizes.small
+            }
+            Kirigami.Icon {
+                visible: compact.vpn.anyActive
+                source: "network-vpn-symbolic"
+                isMask: true
+                color: Kirigami.Theme.textColor
                 Layout.preferredWidth: Kirigami.Units.iconSizes.small
                 Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }

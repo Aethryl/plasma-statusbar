@@ -8,6 +8,7 @@ ColumnLayout {
     required property var audio
     required property var power
     required property var updates
+    required property var vpn
     property bool active: false
     signal close()
     spacing: Kirigami.Units.largeSpacing
@@ -23,6 +24,12 @@ ColumnLayout {
     NetworkSection {
         net: content.net
         Layout.fillWidth: true
+    }
+    Hairline {}
+    VpnSection {
+        vpn: content.vpn
+        Layout.fillWidth: true
+        onDone: content.close()
     }
     Hairline {}
     BluetoothSection {

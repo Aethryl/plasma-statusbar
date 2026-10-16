@@ -36,20 +36,13 @@ RowLayout {
                 Layout.preferredWidth: Kirigami.Units.iconSizes.small
                 Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }
-            WifiGlyph {
-                visible: compact.net.wifi
-                strength: compact.net.strength
-                locked: compact.net.locked
-                Layout.preferredWidth: implicitWidth
-                Layout.preferredHeight: implicitHeight
-            }
             Kirigami.Icon {
-                visible: !compact.net.wifi
-                source: compact.net.icon
+                source: compact.net.breezeIcon || compact.net.icon
+                fallback: compact.net.icon
                 isMask: true
                 color: compact.net.connecting ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
-                Layout.preferredWidth: Kirigami.Units.iconSizes.small
-                Layout.preferredHeight: Kirigami.Units.iconSizes.small
+                Layout.preferredWidth: compact.net.breezeIcon ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+                Layout.preferredHeight: Layout.preferredWidth
             }
             Kirigami.Icon {
                 visible: BluezQt.Manager.bluetoothOperational

@@ -52,13 +52,14 @@ ColumnLayout {
         text: section.net.name
         current: true
         detail: section.net.wired ? "" : "connected"
-        WifiGlyph {
+        Kirigami.Icon {
             visible: !section.net.wired
-            strength: section.net.strength
-            locked: section.net.locked
-            tone: Kirigami.Theme.highlightColor
-            Layout.preferredWidth: implicitWidth
-            Layout.preferredHeight: implicitHeight
+            source: section.net.breezeIcon || section.net.icon
+            fallback: section.net.icon
+            isMask: true
+            color: Kirigami.Theme.highlightColor
+            Layout.preferredWidth: Kirigami.Units.iconSizes.small
+            Layout.preferredHeight: Kirigami.Units.iconSizes.small
         }
         onClicked: KCMUtils.KCMLauncher.openSystemSettings("kcm_networkmanagement")
     }

@@ -29,8 +29,12 @@ Item {
     readonly property bool wired: online && primary.type === PlasmaNM.Enums.Wired
     readonly property string name: online ? primary.name : ""
     readonly property int strength: online && !wired ? primary.strength : 0
-    readonly property bool wifi: online && !wired && !connecting
-    readonly property bool locked: vpnActive || icon.endsWith("-locked")
+    readonly property string breezeIcon: {
+        const match = /^network-wireless-(\d+)(-locked)?$/.exec(icon)
+        if (!match)
+            return ""
+        return Qt.resolvedUrl("../images/breeze/wifi-" + match[1] + (match[2] || vpnActive ? "-locked" : "") + ".svg")
+    }
 
     function setWireless(on) {
         handler.enableWireless(on)

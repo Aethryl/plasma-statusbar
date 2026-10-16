@@ -24,6 +24,7 @@ PlasmoidItem {
     NetState {
         id: netState
         scanning: root.drooped || !root.inPanel
+        vpnActive: vpnState.anyActive
     }
     AudioState { id: audioState }
     PowerState { id: powerState }

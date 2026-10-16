@@ -4,6 +4,7 @@ import org.kde.plasma.networkmanagement as PlasmaNM
 Item {
     id: net
     property bool scanning: false
+    property bool vpnActive: false
     readonly property alias handler: handler
     readonly property alias model: proxy
     readonly property bool wirelessAvailable: devices.wirelessDeviceAvailable
@@ -28,6 +29,8 @@ Item {
     readonly property bool wired: online && primary.type === PlasmaNM.Enums.Wired
     readonly property string name: online ? primary.name : ""
     readonly property int strength: online && !wired ? primary.strength : 0
+    readonly property bool wifi: online && !wired && !connecting
+    readonly property bool locked: vpnActive || icon.endsWith("-locked")
 
     function setWireless(on) {
         handler.enableWireless(on)

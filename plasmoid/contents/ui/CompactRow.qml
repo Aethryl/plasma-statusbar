@@ -36,7 +36,15 @@ RowLayout {
                 Layout.preferredWidth: Kirigami.Units.iconSizes.small
                 Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }
+            WifiGlyph {
+                visible: compact.net.wifi
+                strength: compact.net.strength
+                locked: compact.net.locked
+                Layout.preferredWidth: implicitWidth
+                Layout.preferredHeight: implicitHeight
+            }
             Kirigami.Icon {
+                visible: !compact.net.wifi
                 source: compact.net.icon
                 isMask: true
                 color: compact.net.connecting ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor

@@ -37,11 +37,11 @@ RowLayout {
                 Layout.preferredHeight: Kirigami.Units.iconSizes.small
             }
             Kirigami.Icon {
-                source: compact.net.breezeIcon || compact.net.icon
+                source: compact.net.themedIcon || compact.net.icon
                 fallback: compact.net.icon
                 isMask: true
                 color: compact.net.connecting ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor
-                Layout.preferredWidth: compact.net.breezeIcon ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+                Layout.preferredWidth: compact.net.themedIcon ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
                 Layout.preferredHeight: Layout.preferredWidth
             }
             Kirigami.Icon {

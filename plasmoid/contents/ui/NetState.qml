@@ -29,11 +29,12 @@ Item {
     readonly property bool wired: online && primary.type === PlasmaNM.Enums.Wired
     readonly property string name: online ? primary.name : ""
     readonly property int strength: online && !wired ? primary.strength : 0
-    readonly property string breezeIcon: {
+    readonly property string themedIcon: {
         const match = /^network-wireless-(\d+)(-locked)?$/.exec(icon)
         if (!match)
             return ""
-        return Qt.resolvedUrl("../images/breeze/wifi-" + match[1] + (match[2] || vpnActive ? "-locked" : "") + ".svg")
+        const level = { "0": 0, "20": 25, "40": 50, "60": 75, "80": 75, "100": 100 }[match[1]] ?? 50
+        return Qt.resolvedUrl("../images/nordzy/wifi-" + level + (match[2] || vpnActive ? "-locked" : "") + ".svg")
     }
 
     function setWireless(on) {

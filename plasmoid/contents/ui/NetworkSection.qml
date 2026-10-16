@@ -54,7 +54,7 @@ ColumnLayout {
         detail: section.net.wired ? "" : "connected"
         Kirigami.Icon {
             visible: !section.net.wired
-            source: section.net.breezeIcon || section.net.icon
+            source: section.net.themedIcon || section.net.icon
             fallback: section.net.icon
             isMask: true
             color: Kirigami.Theme.highlightColor

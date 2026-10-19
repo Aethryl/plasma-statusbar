@@ -11,6 +11,8 @@ ColumnLayout {
     readonly property bool operational: BluezQt.Manager.bluetoothOperational
     readonly property int connected: BluezQt.Manager.connectedDevices.length
     property bool expanded: false
+    property bool active: false
+    readonly property bool scanning: active && operational
     spacing: Kirigami.Units.smallSpacing
 
     function setEnabled(enable) {
@@ -29,6 +31,15 @@ ColumnLayout {
         onToggled: section.setEnabled(!section.operational)
     }
 
+    onScanningChanged: BluezQt.Manager.adapters.forEach(adapter => {
+        if (!adapter.powered)
+            return
+        if (scanning && !adapter.discovering)
+            adapter.startDiscovery()
+        else if (!scanning && adapter.discovering)
+            adapter.stopDiscovery()
+    })
+
     PlasmaBt.DevicesProxyModel {
         id: devices
         hideBlockedDevices: true
@@ -45,14 +56,16 @@ ColumnLayout {
             ListRow {
                 id: deviceRow
                 required property var model
-                visible: model.Connected || (section.expanded && model.Paired)
+                readonly property bool nearby: model.Paired && !!model.Device && model.Device.rssi > -32768
+                visible: model.Connected || nearby || (section.expanded && model.Paired)
                 icon: (model.Icon || "network-bluetooth") + "-symbolic"
                 fallbackIcon: "network-bluetooth-symbolic"
                 text: model.DeviceFullName || model.Name
                 current: model.Connected
                 busy: model.Connecting || model.Disconnecting
                 detail: model.Connecting ? "connecting" : model.Disconnecting ? "disconnecting"
-                    : model.Connected && model.Battery ? model.Battery.percentage + "%" : model.Connected ? "connected" : ""
+                    : model.Connected && model.Battery ? model.Battery.percentage + "%" : model.Connected ? "connected"
+                    : nearby ? "nearby" : ""
                 onClicked: {
                     if (model.Connecting || model.Disconnecting)
                         return

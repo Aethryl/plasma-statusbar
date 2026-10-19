@@ -33,6 +33,7 @@ ColumnLayout {
     }
     Hairline {}
     BluetoothSection {
+        active: content.active
         Layout.fillWidth: true
     }
     Hairline {}

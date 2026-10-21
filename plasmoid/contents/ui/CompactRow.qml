@@ -63,6 +63,7 @@ RowLayout {
                 visible: compact.power.hasBattery
                 percent: compact.power.percent
                 charging: compact.power.charging
+                pluggedIn: compact.power.pluggedIn
                 Layout.alignment: Qt.AlignVCenter
             }
             Clock {

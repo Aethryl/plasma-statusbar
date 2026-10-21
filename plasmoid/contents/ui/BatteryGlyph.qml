@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import QtQuick.Window
 import org.kde.kirigami as Kirigami
 
@@ -6,6 +7,7 @@ Item {
     id: glyph
     property int percent: 0
     property bool charging: false
+    property bool pluggedIn: false
     property color tone: Kirigami.Theme.textColor
     readonly property real dpr: Screen.devicePixelRatio || 1
     readonly property real px: Math.max(1, Math.round(dpr)) / dpr
@@ -15,11 +17,32 @@ Item {
         : percent <= 10 ? Kirigami.Theme.negativeTextColor
         : percent <= 20 ? Kirigami.Theme.neutralTextColor
         : tone
-    implicitWidth: bodyWidth + px * 2
+    readonly property real boltWidth: pluggedIn ? Math.round(bodyHeight * 0.7 * dpr) / dpr : 0
+    readonly property real boltGap: pluggedIn ? px * 2 : 0
+    implicitWidth: boltWidth + boltGap + bodyWidth + px * 2
     implicitHeight: bodyHeight
 
+    Shape {
+        visible: glyph.pluggedIn
+        width: glyph.boltWidth
+        height: glyph.bodyHeight
+        preferredRendererType: Shape.CurveRenderer
+
+        ShapePath {
+            strokeWidth: -1
+            fillColor: Kirigami.Theme.positiveTextColor
+            startX: glyph.boltWidth * 0.62; startY: 0
+            PathLine { x: 0; y: glyph.bodyHeight * 0.58 }
+            PathLine { x: glyph.boltWidth * 0.45; y: glyph.bodyHeight * 0.58 }
+            PathLine { x: glyph.boltWidth * 0.35; y: glyph.bodyHeight }
+            PathLine { x: glyph.boltWidth; y: glyph.bodyHeight * 0.4 }
+            PathLine { x: glyph.boltWidth * 0.55; y: glyph.bodyHeight * 0.4 }
+            PathLine { x: glyph.boltWidth * 0.62; y: 0 }
+        }
+    }
     Rectangle {
         id: body
+        x: glyph.boltWidth + glyph.boltGap
         width: glyph.bodyWidth
         height: glyph.bodyHeight
         radius: glyph.px * 2

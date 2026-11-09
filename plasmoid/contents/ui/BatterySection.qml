@@ -65,4 +65,30 @@ ColumnLayout {
             }
         }
     }
+
+    RowLayout {
+        visible: section.power.holdAvailable
+        Layout.fillWidth: true
+        spacing: Kirigami.Units.smallSpacing
+        Caption {
+            text: "Lid"
+            Layout.fillWidth: true
+        }
+        Chip {
+            text: section.power.holdArmed ? "Awake " + section.power.holdRemainingText : "Stay awake once"
+            icon: "laptop-symbolic"
+            active: section.power.holdArmed
+            opacity: section.power.holdBusy ? 0.5 : 1
+            onClicked: section.power.setHold(!section.power.holdArmed)
+        }
+    }
+
+    PlasmaComponents.Label {
+        visible: section.power.holdAvailable && section.power.holdArmed
+        Layout.fillWidth: true
+        wrapMode: Text.WordWrap
+        text: "Next lid close locks and switches to Saver instead of sleeping"
+        color: Kirigami.Theme.disabledTextColor
+        font.pointSize: Kirigami.Theme.smallFont.pointSize
+    }
 }

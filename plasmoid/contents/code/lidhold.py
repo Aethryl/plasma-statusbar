@@ -1,3 +1,4 @@
+import importlib
 import json
 import os
 import select
@@ -9,6 +10,7 @@ from pathlib import Path
 
 UNIT = "statusbar-lidhold.service"
 ARM_SECONDS = int(os.environ.get("LIDHOLD_ARM_SECONDS", "900"))
+HOLD_SECONDS = int(os.environ.get("LIDHOLD_HOLD_SECONDS", "3600"))
 POLL_SECONDS = 2
 HOLD_ACTION = "32"
 SAVER = "power-saver"
@@ -201,10 +203,40 @@ def set_profile(profile: str) -> bool:
     return False
 
 
-def lock_session() -> None:
-    session = run(
+def display_session() -> str:
+    return run(
         ["loginctl", "show-user", str(os.getuid()), "-p", "Display", "--value"]
     ).stdout.strip()
+
+
+def session_locked() -> bool | None:
+    session = display_session()
+    hint = (
+        run(["loginctl", "show-session", session, "-p", "LockedHint", "--value"])
+        if session
+        else None
+    )
+    saver = run(
+        [
+            "busctl",
+            "--user",
+            "call",
+            "org.freedesktop.ScreenSaver",
+            "/ScreenSaver",
+            "org.freedesktop.ScreenSaver",
+            "GetActive",
+        ]
+    )
+    answers = []
+    if hint is not None and hint.returncode == 0:
+        answers.append(hint.stdout.strip() == "yes")
+    if saver.returncode == 0:
+        answers.append(saver.stdout.strip() == "b true")
+    return any(answers) if answers else None
+
+
+def lock_session() -> None:
+    session = display_session()
     result = run(["loginctl", "lock-session"] + ([session] if session else []))
     if result.returncode != 0:
         log(f"lock-session failed: {result.stderr.strip()}")
@@ -253,8 +285,55 @@ def hold_lid() -> State:
     return state
 
 
-def on_close(state: State) -> None:
+class Inhibitor:
+    def __init__(self) -> None:
+        self.bus = None
+        self.cookie: int | None = None
+
+    def acquire(self) -> None:
+        importlib.import_module("gi").require_version("Gio", "2.0")
+        Gio = importlib.import_module("gi.repository.Gio")
+        GLib = importlib.import_module("gi.repository.GLib")
+        self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        reply = self.bus.call_sync(
+            "org.freedesktop.PowerManagement",
+            "/org/freedesktop/PowerManagement/Inhibit",
+            "org.freedesktop.PowerManagement.Inhibit",
+            "Inhibit",
+            GLib.Variant("(ss)", ("Statusbar", "Lid closed on purpose, staying awake")),
+            GLib.VariantType("(u)"),
+            Gio.DBusCallFlags.NONE,
+            5000,
+            None,
+        )
+        self.cookie = reply.unpack()[0]
+        log(f"inhibited sleep, cookie {self.cookie}")
+
+    def release(self) -> None:
+        if self.bus is None or self.cookie is None:
+            return
+        Gio = importlib.import_module("gi.repository.Gio")
+        GLib = importlib.import_module("gi.repository.GLib")
+        try:
+            self.bus.call_sync(
+                "org.freedesktop.PowerManagement",
+                "/org/freedesktop/PowerManagement/Inhibit",
+                "org.freedesktop.PowerManagement.Inhibit",
+                "UnInhibit",
+                GLib.Variant("(u)", (self.cookie,)),
+                None,
+                Gio.DBusCallFlags.NONE,
+                5000,
+                None,
+            )
+        except GLib.Error as error:
+            log(f"UnInhibit failed: {error.message}")
+        self.cookie = None
+
+
+def on_close(state: State, now: float) -> None:
     state["phase"] = "closed"
+    state["closed_at"] = now
     state["held_profile"] = get_profile()
     save_state(state)
     set_profile(SAVER)
@@ -270,17 +349,37 @@ class Cycle:
     def stop(self, *_: object) -> None:
         self.done = True
 
-    def step(self, closed: bool | None, now: float) -> None:
+    def step(self, closed: bool | None, now: float, locked: bool | None = None) -> None:
         phase = self.state.get("phase")
         if phase == "armed":
             if closed:
-                on_close(self.state)
+                on_close(self.state, now)
             elif now >= float(str(self.state.get("deadline", 0))):
                 log("expired")
                 self.done = True
-        elif phase == "closed" and closed is False:
-            log("lid opened")
-            self.done = True
+        elif phase == "closed":
+            if closed is False:
+                log("lid opened, waiting for unlock")
+                restore()
+                self.state["phase"] = "opened"
+                self.state["opened_at"] = now
+            elif self.held_too_long(now):
+                log(f"held {HOLD_SECONDS}s, back to normal lid behaviour")
+                self.done = True
+        elif phase == "opened":
+            if not locked:
+                log("unlocked")
+                self.done = True
+            elif now - float(str(self.state.get("opened_at", now))) >= ARM_SECONDS:
+                log(f"still locked {ARM_SECONDS}s after opening, releasing")
+                self.done = True
+
+    def tick(self) -> None:
+        locked = session_locked() if self.state.get("phase") == "opened" else None
+        self.step(lid_closed(), time.time(), locked)
+
+    def held_too_long(self, now: float) -> bool:
+        return now - float(str(self.state.get("closed_at", now))) >= HOLD_SECONDS
 
     def run(self) -> None:
         signal.signal(signal.SIGTERM, self.stop)
@@ -289,8 +388,10 @@ class Cycle:
             log("lid already closed, not arming")
             return
         watcher = None
+        inhibitor = Inhibitor()
         try:
             self.state = hold_lid()
+            inhibitor.acquire()
             log(f"armed for {ARM_SECONDS}s")
             watcher = subprocess.Popen(
                 [
@@ -306,7 +407,7 @@ class Cycle:
                 stderr=subprocess.DEVNULL,
             )
             fd = watcher.stdout.fileno() if watcher.stdout else None
-            self.step(lid_closed(), time.time())
+            self.tick()
             while not self.done:
                 if fd is None:
                     time.sleep(POLL_SECONDS)
@@ -314,10 +415,11 @@ class Cycle:
                     fd, 65536
                 ):
                     fd = None
-                self.step(lid_closed(), time.time())
+                self.tick()
         finally:
             if watcher is not None:
                 watcher.terminate()
+            inhibitor.release()
             restore()
 
 
@@ -354,6 +456,7 @@ def arm() -> None:
             f"--unit={UNIT}",
             "--description=Statusbar: don't sleep on next lid close",
             f"--setenv=LIDHOLD_ARM_SECONDS={ARM_SECONDS}",
+            f"--setenv=LIDHOLD_HOLD_SECONDS={HOLD_SECONDS}",
             "-p",
             f"ExecStopPost={PYTHON} {SCRIPT} restore",
             "-p",

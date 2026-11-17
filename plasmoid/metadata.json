@@ -1,6 +1,6 @@
 {
     "KPlugin": {
-        "Authors": [{ "Name": "Fabian" }],
+        "Authors": [{ "Name": "Aethryl" }],
         "Category": "System Information",
         "Description": "App tray icons, system glyphs and clock with a notch for network, bluetooth, sound, brightness, power and session",
         "Icon": "preferences-system",

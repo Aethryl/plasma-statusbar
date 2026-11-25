@@ -1,8 +1,28 @@
 # plasma-statusbar
 
-A Plasma 6 panel widget (`io.github.aethryl.statusbar`): network, Bluetooth, volume, battery and update glyphs plus the clock. Its notch has Wi-Fi, Bluetooth, sound, brightness, battery, power profiles, session actions and pending updates.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/panel-dark.png">
+  <img src="docs/screenshots/panel-light.png" alt="Statusbar with update, network, Bluetooth, volume and battery glyphs beside the clock" width="285">
+</picture>
 
-App tray icons stay in KDE's own system tray, placed just left of it with the system items (network, volume, battery, Bluetooth, brightness) turned off in the tray's settings so they aren't shown twice.
+Statusbar (`io.github.aethryl.statusbar`) puts the clock and network, Bluetooth, volume, battery and update indicators in your Plasma 6 panel.
+
+## Inside the notch
+
+- Check Wi-Fi and Bluetooth connections and pending updates.
+- Adjust sound and brightness.
+- Check battery status, select a power profile and access session actions.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/notch-dark.png">
+  <img src="docs/screenshots/notch-light.png" alt="Statusbar notch with demo connectivity, sound, brightness, battery and update information" width="367">
+</picture>
+
+*Screenshots show simulated system status.*
+
+## Requirements
+
+- Plasma 6 (tested on 6.7.5)
 
 ## Install
 
@@ -14,11 +34,11 @@ gdbus call --session -d org.kde.plasmashell -o /PlasmaShell \
   -m org.kde.PlasmaShell.evaluateScript "$(cat add-to-panel.js)"
 ```
 
-`install.sh` symlinks `plasmoid/` into `~/.local/share/plasma/plasmoids/`, so edits are live; after a QML change run `systemctl --user restart plasma-plasmashell`.
+`install.sh` symlinks `plasmoid/` into `~/.local/share/plasma/plasmoids/`, so edits are live. After a QML change, run `systemctl --user restart plasma-plasmashell`.
 
-## Requirements
+### Pair with the KDE system tray
 
-- Plasma 6 (tested on 6.7.5)
+Place Statusbar just to the left of KDE's system tray. Keep app icons in the tray and disable its network, volume, battery, Bluetooth and brightness items to avoid duplicate indicators.
 
 ## Licences
 

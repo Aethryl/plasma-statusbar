@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/panel-dark.png">
-  <img src="docs/screenshots/panel-light.png" alt="Statusbar with update, network, Bluetooth, volume and battery glyphs beside the clock" width="285">
+  <img src="docs/screenshots/panel-light.png" alt="Statusbar with update, network, Bluetooth, volume and battery glyphs beside the clock" width="425">
 </picture>
 
 Statusbar (`io.github.aethryl.statusbar`) puts the clock and network, Bluetooth, volume, battery and update indicators in your Plasma 6 panel.
@@ -15,7 +15,7 @@ Statusbar (`io.github.aethryl.statusbar`) puts the clock and network, Bluetooth,
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/notch-dark.png">
-  <img src="docs/screenshots/notch-light.png" alt="Statusbar notch with demo connectivity, sound, brightness, battery and update information" width="367">
+  <img src="docs/screenshots/notch-light.png" alt="Statusbar notch with demo connectivity, sound, brightness, battery and update information" width="505">
 </picture>
 
 *Screenshots show simulated system status.*
